@@ -27,7 +27,7 @@ resource "google_compute_address" "static" {
 }
 
 module "jenkins-master-disk-devops-00" {
-  source    = "./modules/"
+  source    = "git::https://github.com/its-software-services-devops/tf-module-gcp-disk.git//modules?ref=1.0.1"
   disk_name = "jenkins-master-disk-devops-00"
   disk_zone = local.zone
   disk_size_gb = 50
