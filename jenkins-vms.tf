@@ -17,15 +17,21 @@ provider "google" {
   credentials = file("D:/dev/keys/its-artifact-commons-6eb8e8c315b3.json")
 }
 
+locals {
+  zone = "asia-southeast1-b"
+  region = "asia-southeast1"
+}
+
 resource "google_compute_address" "static" {
   name = "public-ip-001"
 }
 
-resource "google_compute_disk" "disk00" {
-  name  = "jenkins-master-vm-devops-disk"
-  type  = "pd-ssd"
-  zone  = "asia-southeast1-b"
-  physical_block_size_bytes = 4096
+module "jenkins-master-disk-devops-00" {
+  source    = "./modules/"
+  disk_name = "jenkins-master-disk-devops-00"
+  disk_zone = local.zone
+  disk_size_gb = 50
+  snapshot_region = local.region
 }
 
 module "jenkins-master-vm-devops-00" {
@@ -39,10 +45,10 @@ module "jenkins-master-vm-devops-00" {
   public_key_file  = "D:/dev/keys/id_rsa.pub"
   private_key_file = "D:/dev/keys/id_rsa"
   vm_machine_type  = "e2-micro"
-  vm_machine_zone  = "asia-southeast1-b"
+  vm_machine_zone  = local.zone
   ssh_user         = "cicd"
   provisioner_local_path  = "provisioner.bash"
   provisioner_remote_path = "/home/cicd/provisioner.bash"
-  external_disks   = [{index = 1, source = google_compute_disk.disk00.id, mode = "READ_WRITE"}]
+  external_disks   = [{index = 1, source = module.jenkins-master-disk-devops-00.disk_id, mode = "READ_WRITE"}]
   network_configs  = [{index = 1, network = "default", nat_ip = google_compute_address.static.address}]
 }
