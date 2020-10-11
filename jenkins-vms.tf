@@ -30,12 +30,12 @@ module "jenkins-master-disk-devops-00" {
   source    = "git::https://github.com/its-software-services-devops/tf-module-gcp-disk.git//modules?ref=1.0.1"
   disk_name = "jenkins-master-disk-devops-00"
   disk_zone = local.zone
-  disk_size_gb = 50
+  disk_size_gb = 10
   snapshot_region = local.region
 }
 
 module "jenkins-master-vm-devops-00" {
-  source          = "git::https://github.com/its-software-services-devops/tf-module-gcp-vm.git//modules?ref=1.0.1"
+  source          = "git::https://github.com/its-software-services-devops/tf-module-gcp-vm.git//modules?ref=1.0.2"
   compute_name    = "jenkins-master-vm-devops"
   compute_seq     = "00"
   vm_tags         = ["jenkins-master", "http-server"]
