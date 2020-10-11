@@ -30,12 +30,12 @@ module "jenkins-master-disk-devops-00" {
   source    = "git::https://github.com/its-software-services-devops/tf-module-gcp-disk.git//modules?ref=1.0.1"
   disk_name = "jenkins-master-disk-devops-00"
   disk_zone = local.zone
-  disk_size_gb = 50
+  disk_size_gb = 10
   snapshot_region = local.region
 }
 
 module "jenkins-master-vm-devops-00" {
-  source          = "git::https://github.com/its-software-services-devops/tf-module-gcp-vm.git//modules?ref=1.0.1"
+  source          = "git::https://github.com/its-software-services-devops/tf-module-gcp-vm.git//modules?ref=1.0.3"
   compute_name    = "jenkins-master-vm-devops"
   compute_seq     = "00"
   vm_tags         = ["jenkins-master", "http-server"]
@@ -46,9 +46,10 @@ module "jenkins-master-vm-devops-00" {
   private_key_file = "D:/dev/keys/id_rsa"
   vm_machine_type  = "e2-micro"
   vm_machine_zone  = local.zone
+  vm_deletion_protection = false
   ssh_user         = "cicd"
-  provisioner_local_path  = "provisioner.bash"
-  provisioner_remote_path = "/home/cicd/provisioner.bash"
+  provisioner_local_path  = "scripts/provisioner.bash"
+  provisioner_remote_path = "/home/cicd"
   external_disks   = [{index = 1, source = module.jenkins-master-disk-devops-00.disk_id, mode = "READ_WRITE"}]
   network_configs  = [{index = 1, network = "default", nat_ip = google_compute_address.static.address}]
 }
