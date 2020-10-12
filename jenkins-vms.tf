@@ -20,11 +20,26 @@ provider "google" {
 locals {
   zone = "asia-southeast1-b"
   region = "asia-southeast1"
+  network_name = "default"
 }
 
 resource "google_compute_address" "static" {
   name = "public-ip-001"
 }
+
+resource "google_compute_firewall" "jenkins-http-fw" {
+  name    = "jenkins-master-allow-firewall"
+  network = local.network_name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+
+  target_tags = ["jenkins-master"]
+  source_ranges = ["0.0.0.0/0"]
+}
+
 
 module "jenkins-master-disk-devops-00" {
   source    = "git::https://github.com/its-software-services-devops/tf-module-gcp-disk.git//modules?ref=1.0.1"
@@ -38,7 +53,7 @@ module "jenkins-master-vm-devops-00" {
   source          = "git::https://github.com/its-software-services-devops/tf-module-gcp-vm.git//modules?ref=1.0.3"
   compute_name    = "jenkins-master-vm-devops"
   compute_seq     = "00"
-  vm_tags         = ["jenkins-master", "http-server"]
+  vm_tags         = ["jenkins-master"]
   vm_service_account = "devops-cicd@its-artifact-commons.iam.gserviceaccount.com"
   default_ip_address = google_compute_address.static.address
   boot_disk_image  = "projects/centos-cloud/global/images/centos-7-v20200910"
@@ -51,5 +66,5 @@ module "jenkins-master-vm-devops-00" {
   provisioner_local_path  = "scripts/provisioner.bash"
   provisioner_remote_path = "/home/cicd"
   external_disks   = [{index = 1, source = module.jenkins-master-disk-devops-00.disk_id, mode = "READ_WRITE"}]
-  network_configs  = [{index = 1, network = "default", nat_ip = google_compute_address.static.address}]
+  network_configs  = [{index = 1, network = local.network_name, nat_ip = google_compute_address.static.address}]
 }
