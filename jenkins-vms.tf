@@ -52,7 +52,7 @@ module "jenkins-master-disk-devops-00" {
 module "jenkins-master-vm-devops-00" {
   source          = "git::https://github.com/its-software-services-devops/tf-module-gcp-vm.git//modules?ref=1.0.3"
   compute_name    = "jenkins-master-vm-devops"
-  compute_seq     = "00"
+  compute_seq     = "01"
   vm_tags         = ["jenkins-master"]
   vm_service_account = "devops-cicd@its-artifact-commons.iam.gserviceaccount.com"
   default_ip_address = google_compute_address.static.address
