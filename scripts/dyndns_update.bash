@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 HOSTNAME=$(hostname)
 PARAM_FILE=${HOSTNAME}.params
