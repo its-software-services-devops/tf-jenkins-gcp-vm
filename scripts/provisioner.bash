@@ -45,5 +45,8 @@ chmod 755 ${SCRIPT_PATH}/dyndns_update.bash
 ${SCRIPT_PATH}/jenkins_start.bash
 ${SCRIPT_PATH}/dyndns_update.bash
 
-echo "*/1 * * * * ${SCRIPT_PATH}/jenkins_check.bash" | sudo crontab -u ${USER} -
-echo "*/1 * * * * ${SCRIPT_PATH}/dyndns_update.bash" | sudo crontab -u ${USER} -
+sudo cat << EOF > /tmp/crontab
+*/1 * * * * ${SCRIPT_PATH}/jenkins_check.bash
+*/1 * * * * ${SCRIPT_PATH}/dyndns_update.bash
+EOF
+cat /tmp/crontab | sudo crontab -u ${USER} -
