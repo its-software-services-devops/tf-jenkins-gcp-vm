@@ -8,8 +8,8 @@ MOUNTED_POINT=/ext_disk1
 FSTAB=/etc/fstab
 
 sudo mkdir -p ${MOUNTED_POINT}
-#TODO : Check if file system already exist, if yes then skip mkfs
 
+#TODO : Check if file system already exist, if yes then skip mkfs
 sudo blkid ${DEVICE_PATH}
 if [ $? -eq 0 ]
 then
@@ -32,19 +32,18 @@ sudo chown ${USER} ${MOUNTED_POINT}/jenkins_home
 
 #sudo yum update -y
 
-#sudo yum check-update
 sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum install docker -y
 sudo systemctl start docker
 sudo systemctl enable docker
 
-#sudo yum install java-1.8.0-openjdk -y
-#java -version
-
 chmod 755 ${SCRIPT_PATH}/jenkins_check.bash
 chmod 755 ${SCRIPT_PATH}/jenkins_start.bash
+chmod 755 ${SCRIPT_PATH}/dyndns_update.bash
 
 ${SCRIPT_PATH}/jenkins_start.bash
+${SCRIPT_PATH}/dyndns_update.bash
 
 echo "*/1 * * * * ${SCRIPT_PATH}/jenkins_check.bash" | sudo crontab -u ${USER} -
+echo "*/1 * * * * ${SCRIPT_PATH}/dyndns_update.bash" | sudo crontab -u ${USER} -
