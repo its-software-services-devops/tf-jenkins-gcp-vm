@@ -52,9 +52,10 @@ module "jenkins-master-vm-devops-00" {
   vm_tags         = ["jenkins-master"]
   vm_service_account = "devops-cicd@its-artifact-commons.iam.gserviceaccount.com"
   boot_disk_image  = "projects/centos-cloud/global/images/centos-7-v20200910"
+  boot_disk_size   = 20
   public_key_file  = "D:/dev/keys/id_rsa.pub"
   private_key_file = "D:/dev/keys/id_rsa"
-  vm_machine_type  = "e2-micro"
+  vm_machine_type  = "e2-small"
   vm_machine_zone  = local.zone
   vm_deletion_protection = false
   ssh_user         = "cicd"
